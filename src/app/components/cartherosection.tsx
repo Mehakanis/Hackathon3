@@ -1,78 +1,162 @@
- import Image from "next/image"
+"use client";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Product } from "../types/product";
+import { getCartItems, removeFromCart, updateCartQuantity } from "../actions/actions";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
- export default function CartHeroSection (){
-    return(
-        <section className="bg-[#F9F9F9] px-10 md:px-20 lg:px-40 pt-16 pb-20 mt-6 ">
-            <div>
-                <h1 className="text-[#2A254B] text-xl md:text-3xl ">Your shopping cart</h1>
+export default function CartHeroSection() {
+    const [cartItems, setCartItems] = useState<Product[]>([]);
+  
+    useEffect(() => {
+      const items = getCartItems();
+      console.log("Initial cart items:", items); // Debugging
+      setCartItems(items);
+    }, []);
+  
+    const handleRemove = (id: string) => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will not be able to recover this item!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          removeFromCart(id);
+          const updatedItems = getCartItems();
+          console.log("Updated cart items after removal:", updatedItems); // Debugging
+          setCartItems(updatedItems);
+          Swal.fire("Removed!", "Item has been removed.", "success");
+        }
+      });
+    };
+  
+    const handleQuantityChange = (id: string, quantity: number) => {
+      console.log("Updating quantity for item:", id, "New quantity:", quantity); // Debugging
+      updateCartQuantity(id, quantity); // Update local storage
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item._id === id ? { ...item, quantity } : item
+        )
+      ); // Update state
+    };
+  
+    const handleIncrement = (id: string) => {
+      console.log("Incrementing item:", id); // Debugging
+      const product = cartItems.find((item) => item._id === id);
+      if (product) {
+        const newQuantity = product.quantity + 1;
+        handleQuantityChange(id, newQuantity);
+      }
+    };
+  
+    const handleDecrement = (id: string) => {
+      console.log("Decrementing item:", id); // Debugging
+      const product = cartItems.find((item) => item._id === id);
+      if (product && product.quantity > 1) {
+        const newQuantity = product.quantity - 1;
+        handleQuantityChange(id, newQuantity);
+      }
+    };
+  
+    const calculatedTotal = () => {
+      return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    };
+  
+    const router = useRouter();
+    const handleProceed = () => {
+      Swal.fire({
+        title: "Proceed to Checkout?",
+        text: "Please review your cart before checkout",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, proceed!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire("Success", "Your order has been successfully processed", "success");
+  
+          // Clear cart from local storage
+          localStorage.removeItem("cart");
+  
+          // Reset the cart state
+          setCartItems([]); // Reset cart items state
+  
+          router.push("/checkoutsection"); // Direct navigation to the Checkout Section
+        }
+      });
+    };
+  
+    return (
+      <section className="bg-[#F9F9F9] px-6 md:px-16 lg:px-32 pt-12 pb-20 mt-6">
+        {/* Cart Title */}
+        <h1 className="text-[#2A254B] text-xl md:text-3xl font-semibold">Your Shopping Cart</h1>
+  
+        {/* Check if cart is empty */}
+        {cartItems.length === 0 ? (
+          <p className="text-center text-lg text-gray-500 mt-6">Your cart is empty</p>
+        ) : (
+          <>
+            {/* Headers */}
+            <div className="hidden md:grid grid-cols-[2fr_1fr_1fr] gap-10 pt-10 border-b-2 pb-4 text-[#2A254B] font-medium">
+              <h6>Product</h6>
+              <h6 className="text-center">Quantity</h6>
+              <h6 className="text-left">Total</h6>
             </div>
-            <div className="text-[#2A254B] md:flex pt-10 gap-20 lg:gap-60 hidden ">
-              <div className="flex  gap-32 lg:gap-96  ">
-                <h6 >Product</h6>
-                <h6 >Quantity</h6>
-                </div><div>
-                <h6>Total</h6>
+  
+            {/* Cart Items */}
+            {cartItems.map((item) => (
+              <div key={item._id} className="flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr] gap-6 items-center py-6 border-b">
+                {/* Product Info */}
+                <div className="flex items-center gap-4 w-full">
+                  <Image src={item.imageUrl} alt={item.name} width={80} height={80} className="rounded-md" />
+                  <div>
+                    <h4 className="text-sm md:text-base font-semibold">{item.name}</h4>
+                    <p className="text-xs text-gray-600 line-clamp-2">{item.description}</p>
+                    <p className="text-sm font-medium">£{item.price}</p>
+                  </div>
                 </div>
+  
+                {/* Quantity Controls */}
+                <div className="flex items-center gap-3 justify-center">
+                  <button onClick={() => handleDecrement(item._id)} className="px-2 py-1 bg-gray-200 rounded">
+                    -
+                  </button>
+                  <p className="w-8 text-center">{item.quantity}</p>
+                  <button onClick={() => handleIncrement(item._id)} className="px-2 py-1 bg-gray-200 rounded">
+                    +
+                  </button>
+                </div>
+  
+                {/* Total & Remove Button */}
+                <div className="flex justify-between md:justify-start w-full gap-20">
+                  <p className="text-sm font-medium">£{item.price * item.quantity}</p>
+                  <button onClick={() => handleRemove(item._id)} className="text-red-500 hover:underline ml-4">
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+  
+            {/* Subtotal & Checkout */}
+            <div className="flex flex-col md:items-end mt-8">
+              <div className="flex gap-4 text-lg font-semibold">
+                <h4 className="text-[#4E4D93]">Subtotal:</h4>
+                <h3>£{calculatedTotal()}</h3>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">Taxes and shipping are calculated at checkout.</p>
+              <button onClick={handleProceed} className="bg-[#2A254B] px-8 py-3 text-white text-sm mt-6 rounded hover:bg-[#1e1a3d] transition">
+                Go to Checkout
+              </button>
             </div>
-            <div className="border-b-2 pb-6 hidden md:block"></div>
-{/* cart items */}
-            <div className="flex flex-wrap sm:gap-12 md:gap-20 lg:gap-64 pt-6 ">
-<div className="flex flex-wrap gap-2 ml-10 md:ml-0">
-    <div className="">
-    <Image src="/cart1.png" alt="" width={70} height={70} />
-    </div>
-    <div>
-    <h4 className="pb-2 text-sm md:text-base">Graystone vase</h4>
-    <p className="text-xs">A timeless ceramic vase with <br /> 
-    a tri color grey glaze.</p>
-    
-    <p className="text-sm">£85</p>
-    </div>
-</div>
-<div className="">
-    <p>1</p>
-</div>
-
-    <p className="hidden md:block">£85</p>
-
-            </div>
-{/* cart item 2 */}
-            <div className="flex sm:gap-12 md:gap-20 lg:gap-64 pt-6">
-<div className="flex gap-2 ml-10 md:ml-0">
-    <div className="">
-    <Image src="/cart2.png" alt="" width={70} height={70} />
-    </div>
-    <div>
-    <h4 className="pb-2 text-sm md:text-base">Basic white vase</h4>
-    <p className="text-xs">Beautiful and simple this is <br />
-    one for the classics</p>
-    
-    <p className="text-sm">£85</p>
-    </div>
-</div>
-<div>
-    <p>1</p>
-</div>
-
-    <p className="hidden md:block">£125</p>
-
-            </div>
-            <div className="border-b-2 pb-6 "></div>
-<div className="place-items-center md:place-items-end">
-  <div className="flex gap-4 py-4">
-  <h4 className=" text-[#4E4D93]">
-  Subtotal
-  </h4>
-  <h3>
-  £210
-  </h3>
-  </div>
-  <p className="text-sm   text-[#4E4D93]"> Taxes and shipping are calculated at checkout </p>
-  <button className="bg-[#2A254B] md:px-4 px-28 py-3 text-xs text-white my-4">Go to checkout</button>
-</div>
-
-
-        </section>
-    )
-}
-
+          </>
+        )}
+      </section>
+    );
+  }
+  

@@ -1,6 +1,6 @@
 import Header1 from "../components/header1"
 import ProductHeroSection from "../components/productherosection"
-import ProductList from "../components/productlist"
+import AllProducts from "../components/allproducts"
 import Footer from "../components/footer"
 
 export default function ProductPage(){
@@ -10,7 +10,7 @@ export default function ProductPage(){
 <Header1/>
 </div>
 <ProductHeroSection/>
-<ProductList/>
+<AllProducts/>
 <div className="mt-20">
 <Footer/>
 </div>

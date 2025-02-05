@@ -1,12 +1,23 @@
-import { Search } from "lucide-react";
-import { ShoppingCartIcon } from "lucide-react";
-import { CircleUser } from "lucide-react";
-import { Menu } from "lucide-react";
+'use client'; // Add this directive for client-side interactivity
+
+import { Search, ShoppingCartIcon, CircleUser, Menu } from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
-
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header1() {
+  const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
+  const router = useRouter(); // Router for navigation
+
+  // Handle search submission
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    if (searchQuery.trim()) {
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`); // Navigate to search results page
+    }
+  };
+
   return (
     <section>
       <div>
@@ -32,8 +43,8 @@ export default function Header1() {
                 <Link href="/about">
                   <h2 className="hover:text-[#22202E] cursor-pointer">About Us</h2>
                 </Link>
-                <Link href="/productlisting">
-                  <h2 className="hover:text-[#22202E] cursor-pointer">ProductListing</h2>
+                <Link href="/chairs">
+                  <h2 className="hover:text-[#22202E] cursor-pointer"></h2>Chairs
                 </Link>
                 <h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2>
                 <h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2>
@@ -51,10 +62,19 @@ export default function Header1() {
             </SheetContent>
           </Sheet>
 
-          {/* Search Icon */}
-          <div>
-            <Search className= "hidden md:block stroke-[1.5px] text-gray-600" />
-          </div>
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="hidden md:flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22202E]"
+            />
+            <button type="submit" className="p-2 bg-[#22202E] text-white rounded-lg hover:bg-[#1e1a3d] transition">
+              <Search className="stroke-[1.5px]" />
+            </button>
+          </form>
 
           {/* Logo */}
           <h1 className="text-[#22202E] text-[18px] font-semibold">Avion</h1>
@@ -77,18 +97,24 @@ export default function Header1() {
           <Link href="/">
             <h2 className="hover:text-[#22202E] cursor-pointer">Home</h2>
           </Link>
-          <Link href="products">
+          <Link href="/products">
             <h2 className="hover:text-[#22202E] cursor-pointer">All Products</h2>
           </Link>
           <Link href="/about">
             <h2 className="hover:text-[#22202E] cursor-pointer">About Us</h2>
           </Link>
-          <Link href="/productlisting">
-            <h2 className="hover:text-[#22202E] cursor-pointer">ProductListing</h2>
+          <Link href="/chairs">
+            <h2 className="hover:text-[#22202E] cursor-pointer">Chairs</h2>
           </Link>
-          <h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2>
-          <h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2>
-          <h2 className="hover:text-[#22202E] cursor-pointer">Cutlery</h2>
+          <Link href="/crockory">
+            <h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2>
+          </Link>
+          <Link href="/tableware">
+            <h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2>
+          </Link>
+          <Link href="/cutlery">
+            <h2 className="hover:text-[#22202E] cursor-pointer">Cutlery</h2>
+          </Link>
         </div>
       </div>
     </section>

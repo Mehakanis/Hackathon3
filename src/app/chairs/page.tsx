@@ -1,8 +1,9 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { newceramics } from "@/sanity/lib/queries";
+import { chairs,} from "@/sanity/lib/queries";
 import Link from "next/link";
+import Header1 from "../components/header1";
+import Footer from "../components/footer";
 
 export type Data = {
   _id: string;
@@ -14,16 +15,18 @@ export type Data = {
 };
 
 export default async function NewCeramics() {
-  const data: Data[] = await sanityFetch({ query: newceramics });
+  const data: Data[] = await sanityFetch({ query: chairs });
 
   return (
-    <section className="pt-[100px]">
-      <div className="text-[22px] pl-[16px] text-[#2A254B] text-center md:text-left">
-        you might also like
-      </div>
-      <div className="flex flex-wrap justify-around mt-10 text-[#2A254B]">
+    <main className="max-w-screen-2xl min-h-screen mx-auto">
+<Header1/>
+    <section className="pb-28 pt-2 px-20">
+
+      <div className="flex flex-wrap justify-left gap-20 mt-10 text-[#2A254B]">
+
         {data.map((product) => (
           <div key={product._id} className="w-[280px] ">
+
                                       <Link href={`/product/${product.slug.current}`}>
 
             <div className="aspect-[2/2.5] relative group overflow-hidden">
@@ -33,6 +36,7 @@ export default async function NewCeramics() {
                   alt={product.name}
                   layout="fill"
                   objectFit="cover"
+    
                 />
               ) : (
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -46,17 +50,16 @@ export default async function NewCeramics() {
                 </button>
               </div>
             </div>
-            <h4 className="pt-4 text-[14px]">{product.name}</h4>
-            <p className="pt-2 text-[14px]">£{product.price}</p>
+            <h4 className="pt-2 text-xl">{product.name}</h4>
+
+            <p className=" text-[16px]">£{product.price}</p>
             </Link>
           </div>
         ))}
       </div>
-      <div className="text-center pt-10">
-        <Button className="bg-[#F9F9F9] text-[#2A254B] text-[12px] hover:bg-lightgrey">
-          View collection
-        </Button>
-      </div>
+      
     </section>
+    <Footer/>
+    </main>
   );
 }

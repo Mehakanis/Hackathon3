@@ -1,35 +1,28 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Data } from "./newceramics";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { newceramics } from "@/sanity/lib/queries";
+import { popularproducts } from "@/sanity/lib/queries";
 import Link from "next/link";
 
-export type Data = {
-  _id: string;
-  name: string;
-  imageUrl: string; // Use the correct field name
-  price: number;
-  slug: { current: string }; // Slug object with current value
-
-};
-
-export default async function NewCeramics() {
-  const data: Data[] = await sanityFetch({ query: newceramics });
+export default async function PopularProducts() {
+  const data: Data[] = await sanityFetch({ query: popularproducts });
 
   return (
     <section className="pt-[100px]">
       <div className="text-[22px] pl-[16px] text-[#2A254B] text-center md:text-left">
-        you might also like
+        Our popular products
       </div>
       <div className="flex flex-wrap justify-around mt-10 text-[#2A254B]">
+        {/* Map over the fetched data and render each product */}
         {data.map((product) => (
-          <div key={product._id} className="w-[280px] ">
-                                      <Link href={`/product/${product.slug.current}`}>
+          <div key={product._id} className="w-[250px] md:w-[350px]">
+                          <Link href={`/product/${product.slug.current}`}>
 
             <div className="aspect-[2/2.5] relative group overflow-hidden">
               {product.imageUrl ? (
                 <Image
-                  src={product.imageUrl} // Use the imageUrl field
+                  src={product.imageUrl}
                   alt={product.name}
                   layout="fill"
                   objectFit="cover"
@@ -49,10 +42,11 @@ export default async function NewCeramics() {
             <h4 className="pt-4 text-[14px]">{product.name}</h4>
             <p className="pt-2 text-[14px]">£{product.price}</p>
             </Link>
+
           </div>
         ))}
       </div>
-      <div className="text-center pt-10">
+      <div className="text-center pt-10 pb-10">
         <Button className="bg-[#F9F9F9] text-[#2A254B] text-[12px] hover:bg-lightgrey">
           View collection
         </Button>

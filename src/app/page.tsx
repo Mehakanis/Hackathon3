@@ -1,8 +1,8 @@
 import Header1 from "./components/header1"
 import HeroBlock from "./components/heroblock"
 import Features from "./components/features"
-import Listings from "./components/listings"
-import ProductListing from "./components/productlisting"
+import NewCeramics from "./components/newceramics"
+import PopularProducts from "./components/popularproducts"
 import Email from "./components/email"
 import Features2 from "./components/features2"
 import Footer from "./components/footer"
@@ -18,8 +18,8 @@ export default function Home(){
 </div>
 <div className="mx-14">
 <Features/>
-<Listings/>
-<ProductListing/>
+<NewCeramics/>
+<PopularProducts/>
 
 </div>
 <div className="bg-[#F9F9F9]"><Email/></div>

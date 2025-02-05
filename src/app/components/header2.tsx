@@ -24,9 +24,17 @@ export default function Header2() {
             <Link href="/productlisting">
               <h2 className="hover:text-[#22202E] cursor-pointer">ProductListing</h2>
             </Link>
+            <Link href="/crockory">
             <h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2>
+            </Link>
+            <Link href="/tableware">
+
             <h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2>
+            </Link>
+            <Link href="/cutlery">
+
             <h2 className="hover:text-[#22202E] cursor-pointer">Cutlery</h2>
+            </Link>
           </div>
 
           {/* Icons */}
