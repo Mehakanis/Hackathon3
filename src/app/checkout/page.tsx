@@ -83,7 +83,6 @@ function PaymentForm() {
       setErrorMessage(null);
       setPaymentSuccess(true);
       setTimeout(() => {
-        alert("Payment Successful! 🎉");
         router.push('/shippo'); // Redirect to the Home page after successful payment
       }, 2000);
     }

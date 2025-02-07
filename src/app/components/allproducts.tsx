@@ -45,12 +45,7 @@ export default function AllProducts() {
                                     layout="fill"
                                     objectFit="cover"
                                 />
-                                {/* Overlay with Add to Cart */}
-                                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                    <button className="bg-white text-black px-4 py-2 text-sm font-semibold hover:bg-gray-200 transition">
-                                        Add to Cart
-                                    </button>
-                                </div>
+                               
                             </div>
                             <h4 className="pt-2 text-[14px]">{product.name}</h4>
                             <p className="pb-5 text-[14px]">${product.price}</p>

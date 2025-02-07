@@ -1,20 +1,28 @@
-'use client'; // Add this directive for client-side interactivity
+'use client';
 
 import { Search, ShoppingCartIcon, CircleUser, Menu } from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getCartItems } from "../actions/actions";
 
 export default function Header1() {
-  const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
-  const router = useRouter(); // Router for navigation
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [cartCount, setCartCount] = useState(0); // State for cart count
+  const router = useRouter();
 
-  // Handle search submission
+  // Fetch cart count from local storage
+  useEffect(() => {
+    const cartItems = getCartItems();
+    setCartCount(cartItems.reduce((total, item) => total + item.quantity, 0)); // Summing up quantities
+  }, []);
+
+  // Handle search
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/search?query=${encodeURIComponent(searchQuery)}`); // Navigate to search results page
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -34,18 +42,10 @@ export default function Header1() {
               </SheetHeader>
               <div className="flex flex-col gap-6 pt-6 text-[#726E8D] text-[14px] sm:text-[16px]">
                 {/* Navigation Links */}
-                <Link href="/">
-                  <h2 className="hover:text-[#22202E] cursor-pointer">Home</h2>
-                </Link>
-                <Link href="/products">
-                  <h2 className="hover:text-[#22202E] cursor-pointer">All Products</h2>
-                </Link>
-                <Link href="/about">
-                  <h2 className="hover:text-[#22202E] cursor-pointer">About Us</h2>
-                </Link>
-                <Link href="/chairs">
-                  <h2 className="hover:text-[#22202E] cursor-pointer"></h2>Chairs
-                </Link>
+                <Link href="/"><h2 className="hover:text-[#22202E] cursor-pointer">Home</h2></Link>
+                <Link href="/products"><h2 className="hover:text-[#22202E] cursor-pointer">All Products</h2></Link>
+                <Link href="/about"><h2 className="hover:text-[#22202E] cursor-pointer">About Us</h2></Link>
+                <Link href="/chairs"><h2 className="hover:text-[#22202E] cursor-pointer">Chairs</h2></Link>
                 <h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2>
                 <h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2>
                 <h2 className="hover:text-[#22202E] cursor-pointer">Cutlery</h2>
@@ -53,8 +53,13 @@ export default function Header1() {
                 {/* Icons */}
                 <div className="flex gap-4 mt-6">
                   <Search className="stroke-[1.5px] text-gray-600" />
-                  <Link href="/cart">
+                  <Link href="/cart" className="relative">
                     <ShoppingCartIcon className="stroke-[1.5px] text-gray-600" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1">
+                        {cartCount}
+                      </span>
+                    )}
                   </Link>
                   <CircleUser className="stroke-[1.5px] text-gray-600" />
                 </div>
@@ -81,40 +86,27 @@ export default function Header1() {
 
           {/* Icons */}
           <div className="hidden md:flex items-center gap-4">
-            <div>
-              <Link href="/cart">
-                <ShoppingCartIcon className="stroke-[1.5px] text-gray-600" />
-              </Link>
-            </div>
-            <div>
-              <CircleUser className="stroke-[1.5px] text-gray-600" />
-            </div>
+            <Link href="/cart" className="relative">
+              <ShoppingCartIcon className="stroke-[1.5px] text-gray-600" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            <CircleUser className="stroke-[1.5px] text-gray-600" />
           </div>
         </div>
 
         {/* Navigation Links */}
         <div className="hidden md:flex flex-wrap justify-center gap-6 pt-6 text-[#726E8D] text-[14px] sm:text-[16px] px-4 md:px-10 lg:px-20">
-          <Link href="/">
-            <h2 className="hover:text-[#22202E] cursor-pointer">Home</h2>
-          </Link>
-          <Link href="/products">
-            <h2 className="hover:text-[#22202E] cursor-pointer">All Products</h2>
-          </Link>
-          <Link href="/about">
-            <h2 className="hover:text-[#22202E] cursor-pointer">About Us</h2>
-          </Link>
-          <Link href="/chairs">
-            <h2 className="hover:text-[#22202E] cursor-pointer">Chairs</h2>
-          </Link>
-          <Link href="/crockory">
-            <h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2>
-          </Link>
-          <Link href="/tableware">
-            <h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2>
-          </Link>
-          <Link href="/cutlery">
-            <h2 className="hover:text-[#22202E] cursor-pointer">Cutlery</h2>
-          </Link>
+          <Link href="/"><h2 className="hover:text-[#22202E] cursor-pointer">Home</h2></Link>
+          <Link href="/products"><h2 className="hover:text-[#22202E] cursor-pointer">All Products</h2></Link>
+          <Link href="/about"><h2 className="hover:text-[#22202E] cursor-pointer">About Us</h2></Link>
+          <Link href="/chairs"><h2 className="hover:text-[#22202E] cursor-pointer">Chairs</h2></Link>
+          <Link href="/crockory"><h2 className="hover:text-[#22202E] cursor-pointer">Crockery</h2></Link>
+          <Link href="/tableware"><h2 className="hover:text-[#22202E] cursor-pointer">Tableware</h2></Link>
+          <Link href="/cutlery"><h2 className="hover:text-[#22202E] cursor-pointer">Cutlery</h2></Link>
         </div>
       </div>
     </section>

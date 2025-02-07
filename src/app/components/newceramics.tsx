@@ -6,7 +6,6 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { newceramics } from "@/sanity/lib/queries";
 import Link from "next/link";
 import { Product } from "../types/product";
-import { handleAddToCart } from "../utils/handlers";
 import imageUrlBuilder from '@sanity/image-url';
 import { client } from '@/sanity/lib/client';
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
@@ -47,7 +46,7 @@ export default function NewCeramics() {
         {data.map((product) => (
           <div key={product._id} className="w-[280px]">
             <Link href={`/product/${product.slug.current}`}>
-              <div className="aspect-[2/2.5] relative group overflow-hidden">
+              <div className="aspect-[2/2.5] relative overflow-hidden">
                 {product.imageUrl ? (
                   <Image
                     src={urlFor(product.imageUrl).url()}
@@ -60,25 +59,21 @@ export default function NewCeramics() {
                     <span className="text-gray-500">No Image</span>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <button
-                    className="bg-white text-black px-4 py-2 text-sm font-semibold hover:bg-gray-200 transition"
-                    onClick={(e) => handleAddToCart(e, product)}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
               </div>
               <h4 className="pt-4 text-[14px]">{product.name}</h4>
               <p className="pt-2 text-[14px]">£{product.price}</p>
             </Link>
+
+          
           </div>
         ))}
       </div>
       <div className="text-center pt-10">
-        <Button className="bg-[#F9F9F9] text-[#2A254B] text-[12px] hover:bg-lightgrey">
-          View collection
-        </Button>
+        <Link href="/products">
+          <Button className="bg-[#F9F9F9] text-[#2A254B] text-[12px] hover:bg-lightgrey">
+            View collection
+          </Button>
+        </Link>
       </div>
     </section>
   );
